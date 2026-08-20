@@ -8,7 +8,9 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
-    "github:verify": "tsx src/scripts/verify-github-app.ts"
+    "github:verify": "tsx src/scripts/verify-github-app.ts",
+    "github:installations": "tsx src/scripts/list-installations.ts",
+    "github:repos": "tsx src/scripts/list-installation-repositories.ts"
   },
   "dependencies": {
     "@octokit/app": "^16.1.4",
