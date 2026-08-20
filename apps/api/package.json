@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "github:verify": "tsx src/scripts/verify-github-app.ts",
     "github:installations": "tsx src/scripts/list-installations.ts",
-    "github:repos": "tsx src/scripts/list-installation-repositories.ts"
+    "github:repos": "tsx src/scripts/list-installation-repositories.ts",
+    "github:package": "tsx src/scripts/read-package-json.ts"
   },
   "dependencies": {
     "@octokit/app": "^16.1.4",
