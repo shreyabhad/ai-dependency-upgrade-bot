@@ -1,6 +1,9 @@
 import { env } from "../config/env.js";
 import { readPackageJson } from "../github/package-json.js";
-import { scanPackageDependencies } from "../npm/dependency-scanner.js";
+import {
+  getMajorUpgradeCandidates,
+  scanPackageDependencies,
+} from "../npm/dependency-scanner.js";
 
 const PACKAGE_JSON_PATH = "apps/api/package.json";
 
@@ -30,13 +33,21 @@ async function main(): Promise<void> {
     console.log("------------------------------------------");
   }
 
-  const majorUpgrades = results.filter(
-    (result) => result.upgradeType === "major",
-  );
+  const majorUpgrades = getMajorUpgradeCandidates(results);
 
   console.log(
     `Major upgrades found: ${majorUpgrades.length}`,
   );
+  if (majorUpgrades.length > 0) {
+  console.log("\nMajor upgrade candidates:");
+  console.log("------------------------------------------");
+
+  for (const upgrade of majorUpgrades) {
+    console.log(
+      `${upgrade.name}: ${upgrade.currentRange} -> ${upgrade.latestVersion}`,
+    );
+  }
+}
 }
 
 main().catch((error: unknown) => {

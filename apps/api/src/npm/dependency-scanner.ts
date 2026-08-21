@@ -66,3 +66,10 @@ export async function scanPackageDependencies(
 
   return results;
 }
+export function getMajorUpgradeCandidates(
+  results: DependencyScanResult[],
+): DependencyScanResult[] {
+  return results.filter(
+    (result) => result.upgradeType === "major",
+  );
+}
