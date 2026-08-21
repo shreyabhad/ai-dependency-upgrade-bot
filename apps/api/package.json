@@ -11,14 +11,18 @@
     "github:verify": "tsx src/scripts/verify-github-app.ts",
     "github:installations": "tsx src/scripts/list-installations.ts",
     "github:repos": "tsx src/scripts/list-installation-repositories.ts",
-    "github:package": "tsx src/scripts/read-package-json.ts"
+    "github:package": "tsx src/scripts/read-package-json.ts",
+    "npm:check": "tsx src/scripts/check-npm-version.ts",
+    "npm:test-version": "tsx src/scripts/test-version-classifier.ts"
   },
   "dependencies": {
     "@octokit/app": "^16.1.4",
-    "fastify": "^5.12.1"
+    "fastify": "^5.12.1",
+    "semver": "^7.8.5"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
+    "@types/semver": "^7.8.0",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   }
