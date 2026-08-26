@@ -1,3 +1,4 @@
+import { getLatestGitHubRelease } from "../github/releases.js";
 import { parseGitHubRepositoryUrl } from "../github/repository-url.js";
 import { getNpmPackageInfo } from "../npm/registry.js";
 
@@ -28,6 +29,21 @@ async function main(): Promise<void> {
 
   console.log(`GitHub owner: ${githubRepository.owner}`);
   console.log(`GitHub repo: ${githubRepository.repo}`);
+  const release = await getLatestGitHubRelease(
+  githubRepository.owner,
+  githubRepository.repo,
+);
+
+if (!release) {
+  console.log("Latest GitHub release: not available");
+  return;
+}
+
+console.log("\nLatest GitHub release:");
+console.log(`Tag: ${release.tagName}`);
+console.log(`Name: ${release.name ?? "unnamed"}`);
+console.log(`Published: ${release.publishedAt ?? "unknown"}`);
+console.log(`URL: ${release.htmlUrl}`);
 }
 
 main().catch((error: unknown) => {

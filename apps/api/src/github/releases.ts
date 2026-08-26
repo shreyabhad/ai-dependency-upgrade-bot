@@ -1,0 +1,53 @@
+export type GitHubRelease = {
+  tagName: string;
+  name: string | null;
+  body: string | null;
+  htmlUrl: string;
+  publishedAt: string | null;
+};
+
+type GitHubReleaseResponse = {
+  tag_name: string;
+  name: string | null;
+  body: string | null;
+  html_url: string;
+  published_at: string | null;
+};
+
+export async function getLatestGitHubRelease(
+  owner: string,
+  repo: string,
+): Promise<GitHubRelease | null> {
+  const response = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/releases/latest`,
+    {
+      headers: {
+        Accept: "application/vnd.github+json",
+        "User-Agent": "ai-dependency-upgrade-bot",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+      signal: AbortSignal.timeout(10_000),
+    },
+  );
+
+  if (response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `GitHub release request failed for ${owner}/${repo}: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const release =
+    (await response.json()) as GitHubReleaseResponse;
+
+  return {
+    tagName: release.tag_name,
+    name: release.name,
+    body: release.body,
+    htmlUrl: release.html_url,
+    publishedAt: release.published_at,
+  };
+}
