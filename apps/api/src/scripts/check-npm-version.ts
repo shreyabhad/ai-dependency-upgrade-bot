@@ -8,6 +8,7 @@ import { parseGitHubRepositoryUrl } from "../github/repository-url.js";
 import { getNpmPackageInfo } from "../npm/registry.js";
 import { getMajorReleaseNotes } from "../migration/release-notes.js";
 import { findChangelog } from "../migration/changelog.js";
+import { findMigrationGuide } from "../migration/migration-guide.js";
 
 async function main(): Promise<void> {
   const packageName = "fastify";
@@ -105,6 +106,21 @@ if (!changelog) {
   console.log(`Found: ${changelog.path}`);
   console.log("------------------------------------------");
   console.log(changelog.content.slice(0, 1000));
+}
+const migrationGuide = await findMigrationGuide(
+  githubRepository.owner,
+  githubRepository.repo,
+  targetMajor,
+);
+
+console.log("\nMigration guide discovery:");
+
+if (!migrationGuide) {
+  console.log("No migration guide found");
+} else {
+  console.log(`Found: ${migrationGuide.path}`);
+  console.log("------------------------------------------");
+  console.log(migrationGuide.content.slice(0, 1000));
 }
 }
 
