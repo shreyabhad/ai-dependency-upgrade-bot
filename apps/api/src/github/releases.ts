@@ -4,6 +4,8 @@ export type GitHubRelease = {
   body: string | null;
   htmlUrl: string;
   publishedAt: string | null;
+  prerelease: boolean;
+  draft: boolean;
 };
 
 type GitHubReleaseResponse = {
@@ -12,6 +14,8 @@ type GitHubReleaseResponse = {
   body: string | null;
   html_url: string;
   published_at: string | null;
+  prerelease: boolean;
+  draft: boolean;
 };
 
 export async function getLatestGitHubRelease(
@@ -49,5 +53,55 @@ export async function getLatestGitHubRelease(
     body: release.body,
     htmlUrl: release.html_url,
     publishedAt: release.published_at,
+    prerelease: release.prerelease,
+    draft: release.draft,
   };
+}
+export async function listGitHubReleases(
+  owner: string,
+  repo: string,
+): Promise<GitHubRelease[]> {
+  const response = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/releases?per_page=30`,
+    {
+      headers: {
+        Accept: "application/vnd.github+json",
+        "User-Agent": "ai-dependency-upgrade-bot",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+      signal: AbortSignal.timeout(10_000),
+    },
+  );
+
+  if (response.status === 404) {
+    return [];
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `GitHub releases request failed for ${owner}/${repo}: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const releases =
+    (await response.json()) as GitHubReleaseResponse[];
+
+  return releases.map((release) => ({
+    tagName: release.tag_name,
+    name: release.name,
+    body: release.body,
+    htmlUrl: release.html_url,
+    publishedAt: release.published_at,
+    prerelease: release.prerelease,
+    draft: release.draft,
+  }));
+}
+export function getStableGitHubReleases(
+  releases: GitHubRelease[],
+): GitHubRelease[] {
+  return releases.filter(
+    (release) =>
+      !release.prerelease &&
+      !release.draft,
+  );
 }

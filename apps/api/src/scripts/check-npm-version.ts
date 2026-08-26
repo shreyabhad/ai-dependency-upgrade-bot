@@ -1,4 +1,8 @@
-import { getLatestGitHubRelease } from "../github/releases.js";
+import {
+  getLatestGitHubRelease,
+  getStableGitHubReleases,
+  listGitHubReleases,
+} from "../github/releases.js";
 import { parseGitHubRepositoryUrl } from "../github/repository-url.js";
 import { getNpmPackageInfo } from "../npm/registry.js";
 
@@ -44,6 +48,19 @@ console.log(`Tag: ${release.tagName}`);
 console.log(`Name: ${release.name ?? "unnamed"}`);
 console.log(`Published: ${release.publishedAt ?? "unknown"}`);
 console.log(`URL: ${release.htmlUrl}`);
+
+const releases = await listGitHubReleases(
+  githubRepository.owner,
+  githubRepository.repo,
+);
+
+const stableReleases = getStableGitHubReleases(releases);
+
+console.log("\nRecent stable GitHub releases:");
+
+for (const item of stableReleases.slice(0, 5)) {
+  console.log(`- ${item.tagName}`);
+}
 }
 
 main().catch((error: unknown) => {
