@@ -1,4 +1,5 @@
 import {
+  findFirstReleaseForMajor,
   getLatestGitHubRelease,
   getStableGitHubReleases,
   listGitHubReleases,
@@ -60,6 +61,23 @@ console.log("\nRecent stable GitHub releases:");
 
 for (const item of stableReleases.slice(0, 5)) {
   console.log(`- ${item.tagName}`);
+}
+const targetMajor = 5;
+
+const firstTargetMajorRelease = findFirstReleaseForMajor(
+  releases,
+  targetMajor,
+);
+
+console.log(
+  `\nEarliest v${targetMajor} release in fetched results:`,
+);
+
+if (!firstTargetMajorRelease) {
+  console.log("Not found");
+} else {
+  console.log(`Tag: ${firstTargetMajorRelease.tagName}`);
+  console.log(`URL: ${firstTargetMajorRelease.htmlUrl}`);
 }
 }
 
