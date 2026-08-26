@@ -6,6 +6,7 @@ import {
 } from "../github/releases.js";
 import { parseGitHubRepositoryUrl } from "../github/repository-url.js";
 import { getNpmPackageInfo } from "../npm/registry.js";
+import { getMajorReleaseNotes } from "../migration/release-notes.js";
 
 async function main(): Promise<void> {
   const packageName = "fastify";
@@ -64,20 +65,30 @@ for (const item of stableReleases.slice(0, 5)) {
 }
 const targetMajor = 5;
 
-const firstTargetMajorRelease = findFirstReleaseForMajor(
+const majorReleaseNotes = getMajorReleaseNotes(
   releases,
   targetMajor,
 );
 
 console.log(
-  `\nEarliest v${targetMajor} release in fetched results:`,
+  `\nMajor v${targetMajor} migration source:`,
 );
 
-if (!firstTargetMajorRelease) {
+if (!majorReleaseNotes) {
   console.log("Not found");
 } else {
-  console.log(`Tag: ${firstTargetMajorRelease.tagName}`);
-  console.log(`URL: ${firstTargetMajorRelease.htmlUrl}`);
+  console.log(`Tag: ${majorReleaseNotes.tagName}`);
+  console.log(`URL: ${majorReleaseNotes.url}`);
+
+  if (majorReleaseNotes.notes) {
+    const preview = majorReleaseNotes.notes.slice(0, 1000);
+
+    console.log("\nRelease notes preview:");
+    console.log("------------------------------------------");
+    console.log(preview);
+  } else {
+    console.log("\nRelease notes: not available");
+  }
 }
 }
 
