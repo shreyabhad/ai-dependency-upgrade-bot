@@ -7,6 +7,7 @@ import {
 import { parseGitHubRepositoryUrl } from "../github/repository-url.js";
 import { getNpmPackageInfo } from "../npm/registry.js";
 import { getMajorReleaseNotes } from "../migration/release-notes.js";
+import { findChangelog } from "../migration/changelog.js";
 
 async function main(): Promise<void> {
   const packageName = "fastify";
@@ -89,6 +90,21 @@ if (!majorReleaseNotes) {
   } else {
     console.log("\nRelease notes: not available");
   }
+}
+
+const changelog = await findChangelog(
+  githubRepository.owner,
+  githubRepository.repo,
+);
+
+console.log("\nChangelog discovery:");
+
+if (!changelog) {
+  console.log("No changelog file found");
+} else {
+  console.log(`Found: ${changelog.path}`);
+  console.log("------------------------------------------");
+  console.log(changelog.content.slice(0, 1000));
 }
 }
 
